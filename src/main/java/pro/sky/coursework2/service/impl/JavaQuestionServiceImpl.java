@@ -5,57 +5,52 @@ import org.springframework.stereotype.Service;
 import pro.sky.coursework2.exceptions.CollectionIsEmptyException;
 import pro.sky.coursework2.exceptions.QuestionNotFoundException;
 import pro.sky.coursework2.model.Question;
+import pro.sky.coursework2.repository.JavaQuestionRepositoryImpl;
+import pro.sky.coursework2.service.QuestionRepository;
 import pro.sky.coursework2.service.QuestionService;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Random;
+import java.util.*;
+
+
+
 @Service
 public class JavaQuestionServiceImpl implements QuestionService {
     private final Random random = new Random();
-    private final Collection<Question> questions = new HashSet<>();
+    private final QuestionRepository questionRepository = new JavaQuestionRepositoryImpl();
     @PostConstruct
     public void initQuestions() {
-        questions.add(new Question("Map - это коллекция?", "Нет"));
-        questions.add(new Question("List - это интерфейс или класс?", "Интерфейс"));
-        questions.add(new Question("Возможно ли увелиение размера массива после его объявления?", "Нет"));
-        questions.add(new Question("Какая наиболее распространенная реализация интерфейса Set?", "HashSet"));
-        questions.add(new Question("В какой области памяти хранятся примитивы?", "В Stack"));
+        questionRepository.add(new Question("Map - это коллекция?", "Нет"));
+        questionRepository.add(new Question("List - это интерфейс или класс?", "Интерфейс"));
+        questionRepository.add(new Question("Возможно ли увелиение размера массива после его объявления?", "Нет"));
+        questionRepository.add(new Question("Какая наиболее распространенная реализация интерфейса Set?", "HashSet"));
+        questionRepository.add(new Question("В какой области памяти хранятся примитивы?", "В Stack"));
     }
-
     @Override
     public Question add(String question, String answer) {
-        return add(new Question(question, answer));
+        return questionRepository.add(question, answer);
     }
 
     @Override
     public Question add(Question question) {
-        questions.add(question);
-        return question;
+        return questionRepository.add(question);
     }
 
     @Override
     public Question remove(Question question) {
-        if (questions.contains(question)) {
-            questions.remove(question);
-            return question;
-        } else {
-            throw new QuestionNotFoundException();
-        }
+        return questionRepository.remove(question);
     }
 
     @Override
     public Collection<Question> getAll() {
-        return Collections.unmodifiableCollection(questions);
+        return questionRepository.getAll();
     }
 
     @Override
     public Question getRandomQuestion() {
-        if (questions.size() != 0) {
-            int questionIndex = random.nextInt(questions.size());
+        if (questionRepository.getAll().size() != 0) {
+            int questionIndex = random.nextInt(questionRepository.getAll().size());
             int index = 0;
-            for (Question question : questions) {
+            for (Question question : questionRepository.getAll()) {
                 if (questionIndex == index) {
                     return question;
                 }
